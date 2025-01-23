@@ -60,6 +60,20 @@ class User {
 
     return result.rows[0];
   }
+
+  // Delete a user
+  static async delete(id) {
+    const result = await db.query(
+      `DELETE FROM users
+       WHERE id = $1
+       RETURNING id`,
+      [id]
+    );
+    if (!result.rows[0]) {
+      throw new Error(`No user found with ID: ${id}`);
+    }
+    return result.rows[0];
+  }
 }
 
 module.exports = User;
