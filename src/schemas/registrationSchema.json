@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Registration Schema",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "userId": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "required": ["eventId", "userId"],
+  "additionalProperties": false
+}

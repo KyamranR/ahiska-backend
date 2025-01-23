@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Feedback Schema",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "minLength": 1
+    },
+    "eventId": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "userId": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "required": ["content", "eventId", "userId"],
+  "additionalProperties": false
+}
