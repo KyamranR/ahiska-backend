@@ -2,10 +2,19 @@ const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
 
+/** Extract token from header */
+function extractToken(req) {
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.split(" ")[1];
+  }
+  return null;
+}
+
 /** Middleware: Authenticate user by verifying JWT token */
 function authenticateJWT(req, res, next) {
   try {
-    const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+    const token = extractToken(req);
     if (token) {
       res.locals.user = jwt.verify(token, SECRET_KEY);
     }
@@ -18,7 +27,7 @@ function authenticateJWT(req, res, next) {
 /** Middleware to ensure user is logged in */
 function ensureLoggedIn(req, res, next) {
   try {
-    const token = req.headers.authorization?.replace(/^Bearer /, "");
+    const token = extractToken(req);
     const payload = jwt.verify(token, SECRET_KEY);
     res.locals.user = payload;
     return next();
