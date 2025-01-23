@@ -7,8 +7,7 @@ const jsonschema = require("jsonschema");
 const userSchema = require("../schemas/userSchema.json");
 const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config");
+const { createToken } = require("../helper/tokens");
 
 /** Register a new user: POST /users/register */
 router.post("/register", async (req, res, next) => {
@@ -20,10 +19,7 @@ router.post("/register", async (req, res, next) => {
     }
 
     const newUser = await User.register(req.body);
-    const token = jwt.sign(
-      { id: newUser.id, email: newUser.email, role: newUser.role },
-      SECRET_KEY
-    );
+    const token = createToken(newUser);
     return res.status(201).json({ user: newUser, token });
   } catch (err) {
     return next(err);
@@ -40,10 +36,7 @@ router.post("/login", async (req, res, next) => {
     }
 
     const user = await User.authenticate(email, password);
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      SECRET_KEY
-    );
+    const token = createToken(user);
     return res.status(200).json({ user, token });
   } catch (err) {
     return next(err);
