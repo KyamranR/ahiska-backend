@@ -31,11 +31,11 @@ class Registration {
   // Get all events that a user registered
   static async getByUser(userId) {
     const result = await db.query(
-      `SELECT r.id, r.event_id AS "eventId", r.user_id AS "userId", e.title AS "eventTitle", e.date AS "eventDate"
+      `SELECT r.id, r.event_id AS "eventId", r.user_id AS "userId", e.title AS "eventTitle", e.event_date AS "eventDate"
             FROM registrations r
             JOIN events e ON r.event_id = e.id
             WHERE r.user_id = $1
-            ORDER BY e.date`,
+            ORDER BY e.event_date`,
       [userId]
     );
     return result.rows;
