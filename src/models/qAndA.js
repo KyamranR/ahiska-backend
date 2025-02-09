@@ -8,7 +8,7 @@ class QAndA {
     const result = await db.query(
       `INSERT INTO q_and_a (question, asked_by)
             VALUES ($1, $2)
-            RETURNING id, question, answer, asked_by AS "askedBy", answered_by AS "answeredBy", created_at AS "createAt", answered_at AS "answereAt"`,
+            RETURNING id, question, answer, asked_by AS "askedBy", answered_by AS "answeredBy", created_at AS "createAt", answered_at AS "answeredAt"`,
       [question, askedBy]
     );
     return result.rows[0];
