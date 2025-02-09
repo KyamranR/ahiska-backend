@@ -1,6 +1,7 @@
 "user strict";
 
 const db = require("../db");
+const { sqlForPartialUpdate } = require("../helper/sql");
 
 class Event {
   // Create a new event
@@ -22,7 +23,16 @@ class Event {
         WHERE id = $1`,
       [eventId]
     );
-    return result.rows[0];
+    return result.rows[0] || null;
+  }
+
+  // Get all events
+  static async getAllEvents() {
+    const result = await db.query(
+      `SELECT id, title, description, event_date AS "date", event_time AS "time", location, created_by AS "createdBy"
+       FROM events`
+    );
+    return result.rows;
   }
 
   // Update an event
@@ -39,7 +49,7 @@ class Event {
                       RETURNING id, title, description, event_date AS "date", event_time AS "time", location, created_by AS "createdBy"`;
 
     const result = await db.query(querySql, [...values, eventId]);
-    return result.rows[0];
+    return result.rows[0] || null;
   }
 
   // Delete an event
@@ -48,7 +58,7 @@ class Event {
       `DELETE FROM events WHERE id = $1 RETURNING id`,
       [eventId]
     );
-    return result.rows[0];
+    return result.rows[0] || null;
   }
 }
 
