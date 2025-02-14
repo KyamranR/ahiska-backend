@@ -98,10 +98,14 @@ class User {
        RETURNING id`,
       [id]
     );
-    if (!result.rows[0]) {
-      throw new Error(`No user found with ID: ${id}`);
+
+    const user = result.rows[0];
+    if (!user) {
+      const error = new Error(`No user found with id: ${id}`);
+      error.status = 404;
+      throw error;
     }
-    return result.rows[0];
+    return user;
   }
 
   // Change user password
