@@ -104,15 +104,20 @@ router.delete(
   }
 );
 
-/** Admin-only: Get all feedback: GET /admin/feedback */
-router.get("/feedback", ensureLoggedIn, ensureAdmin, async (req, res, next) => {
-  try {
-    const feedback = await Feedback.getByEvent();
-    return res.status(200).json({ feedback });
-  } catch (err) {
-    return next(err);
+/** Admin-only: Get all feedback: GET /admin/feedback/eventId */
+router.get(
+  "/feedback/:eventId",
+  ensureLoggedIn,
+  ensureAdmin,
+  async (req, res, next) => {
+    try {
+      const feedback = await Feedback.getByEvent(req.params.eventId);
+      return res.status(200).json({ feedback });
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
 
 /** Admin-only: Delete feedback by ID: DELETE /admin/feedback/:id */
 router.delete(
