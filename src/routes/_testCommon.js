@@ -7,6 +7,7 @@ const Feedback = require("../models/feedback");
 const QandA = require("../models/qAndA");
 const { createToken } = require("../helper/tokens");
 
+let adminToken;
 let adminId;
 let userId;
 let eventId;
@@ -27,6 +28,7 @@ async function commonBeforeAll() {
     role: "admin",
   });
 
+  adminToken = createToken(admin);
   adminId = admin.id;
 
   const user = await User.register({
@@ -44,7 +46,7 @@ async function commonBeforeAll() {
     title: "Test Event",
     description: "Event for testing",
     date: "2025-02-15",
-    time: "12:00",
+    time: "12:00:00",
     location: "Test Location",
     createdBy: adminId,
   });
@@ -88,6 +90,10 @@ function getEventId() {
   return eventId;
 }
 
+function getAdminToken() {
+  return adminToken;
+}
+
 module.exports = {
   commonBeforeAll,
   commonBeforeEach,
@@ -96,4 +102,5 @@ module.exports = {
   getEventId,
   getAdminId,
   getUserId,
+  getAdminToken,
 };
