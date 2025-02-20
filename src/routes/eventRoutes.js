@@ -3,14 +3,18 @@
 const express = require("express");
 const Event = require("../models/event");
 const router = express.Router();
-const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
+const {
+  ensureLoggedIn,
+  ensureAdmin,
+  authenticateJWT,
+} = require("../middleware/auth");
 const jsonschema = require("jsonschema");
 const eventSchema = require("../schemas/eventSchema.json");
 const partialEventSchema = require("../schemas/partialEventSchema.json");
 const { BadRequestError, NotFoundError } = require("../expressError");
 
 /** Create a new event: POST /events */
-router.post("/", ensureAdmin, async (req, res, next) => {
+router.post("/", authenticateJWT, ensureAdmin, async (req, res, next) => {
   try {
     const validator = jsonschema.validate(req.body, eventSchema);
     if (!validator.valid) {
@@ -48,29 +52,41 @@ router.get("/:id", async (req, res, next) => {
 });
 
 /** Update event: PATCH /events/:id */
-router.patch("/:id", ensureLoggedIn, ensureAdmin, async (req, res, next) => {
-  try {
-    const validator = jsonschema.validate(req.body, partialEventSchema);
-    if (!validator.valid) {
-      const errors = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errors);
-    }
+router.patch(
+  "/:id",
+  authenticateJWT,
+  ensureLoggedIn,
+  ensureAdmin,
+  async (req, res, next) => {
+    try {
+      const validator = jsonschema.validate(req.body, partialEventSchema);
+      if (!validator.valid) {
+        const errors = validator.errors.map((e) => e.stack);
+        throw new BadRequestError(errors);
+      }
 
-    const updatedEvent = await Event.update(req.params.id, req.body);
-    return res.status(200).json({ event: updatedEvent });
-  } catch (error) {
-    return next(error);
+      const updatedEvent = await Event.update(req.params.id, req.body);
+      return res.status(200).json({ event: updatedEvent });
+    } catch (error) {
+      return next(error);
+    }
   }
-});
+);
 
 /** Delete event: DELETE /events/:id */
-router.delete("/:id", ensureLoggedIn, ensureAdmin, async (req, res, next) => {
-  try {
-    await Event.delete(req.params.id);
-    return res.status(200).json({ message: "Event deleted successfully" });
-  } catch (error) {
-    return next(error);
+router.delete(
+  "/:id",
+  authenticateJWT,
+  ensureLoggedIn,
+  ensureAdmin,
+  async (req, res, next) => {
+    try {
+      await Event.delete(req.params.id);
+      return res.status(200).json({ message: "Event deleted successfully" });
+    } catch (error) {
+      return next(error);
+    }
   }
-});
+);
 
 module.exports = router;
