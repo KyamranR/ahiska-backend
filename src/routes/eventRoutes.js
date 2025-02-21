@@ -16,13 +16,16 @@ const { BadRequestError, NotFoundError } = require("../expressError");
 /** Create a new event: POST /events */
 router.post("/", authenticateJWT, ensureAdmin, async (req, res, next) => {
   try {
+    console.log("Request body", req.body);
     const validator = jsonschema.validate(req.body, eventSchema);
     if (!validator.valid) {
       const errors = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errors);
     }
+    console.log("ANYTHING**************");
 
     const newEvent = await Event.create(req.body);
+    console.log("New Event:", newEvent);
     return res.status(201).json({ event: newEvent });
   } catch (error) {
     return next(error);

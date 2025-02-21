@@ -45,6 +45,7 @@ describe("POST /events", () => {
       location: "New Test Location",
       created_by: getAdminId(),
     };
+    console.log("Printing anything");
     console.log("GET ADMIN ID:", getAdminId());
     console.log("Sending token:", adminToken);
     const res = await request(app)

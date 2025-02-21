@@ -6,7 +6,9 @@ const { sqlForPartialUpdate } = require("../helper/sql");
 class Event {
   // Create a new event
   static async create({ title, description, date, time, location, createdBy }) {
+    console.log("Date and Time:", date, time);
     const formattedDate = new Date(date).toISOString().split("T")[0];
+    console.log("Formatted Date", formattedDate);
     const formattedTime = /^\d{2}:\d{2}$/.test(time) ? `${time}:00` : time;
     console.log("Formatted time:", formattedTime);
     const result = await db.query(
