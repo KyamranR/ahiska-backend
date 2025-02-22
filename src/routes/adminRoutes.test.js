@@ -71,7 +71,7 @@ describe("Admin Routes", () => {
       const res = await request(app)
         .delete(`/admin/users/${idToDelete}`)
         .set("Authorization", `Bearer ${adminToken}`);
-      console.log("User ID:", idToDelete);
+
       expect(res.statusCode).toBe(200);
       expect(res.body.message).toBe("User deleted successfully.");
     });
@@ -125,8 +125,9 @@ describe("Admin Routes", () => {
   /** DELETE /admin/events/:id */
   describe("DELETE /admin/events/:id", () => {
     test("Admin can delete an event", async () => {
+      const eventId = getEventId();
       const res = await request(app)
-        .delete("/admin/events/1")
+        .delete(`/admin/events/${eventId}`)
         .set("Authorization", `Bearer ${adminToken}`);
 
       expect(res.statusCode).toBe(200);
@@ -138,7 +139,7 @@ describe("Admin Routes", () => {
   describe("GET /admin/feedback/:eventId", () => {
     test("Admin can get all feedback", async () => {
       const eventId = getEventId();
-      console.log("Event ID:", eventId);
+
       const res = await request(app)
         .get(`/admin/feedback/${eventId}`)
         .set("Authorization", `Bearer ${adminToken}`);
