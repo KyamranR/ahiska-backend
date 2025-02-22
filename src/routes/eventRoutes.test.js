@@ -12,7 +12,6 @@ const {
   getEventId,
   getAdminToken,
 } = require("./_testCommon");
-const { createToken } = require("../helper/tokens");
 
 let adminToken;
 let eventId;
@@ -23,14 +22,11 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  console.log("Admin token before request:", adminToken);
   await commonBeforeEach();
   const loginRes = await request(app)
     .post("/auth/login")
     .send({ email: "admin@test.com", password: "adminpassword" });
-  console.log("login response:", loginRes.body);
   adminToken = loginRes.body.token;
-  console.log("Updated Admin Token:", adminToken);
 });
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
@@ -45,15 +41,12 @@ describe("POST /events", () => {
       location: "New Test Location",
       created_by: getAdminId(),
     };
-    console.log("Printing anything");
-    console.log("GET ADMIN ID:", getAdminId());
-    console.log("Sending token:", adminToken);
+
     const res = await request(app)
       .post("/events")
       .set("Authorization", `Bearer ${adminToken}`)
       .send(newEvent);
-    console.log("Sent Authorization Header:", res.req._header);
-    console.log("Response body:", res.body);
+
     expect(res.statusCode).toBe(201);
     expect(res.body.event).toHaveProperty("id");
     expect(res.body.event.title).toBe(newEvent.title);
