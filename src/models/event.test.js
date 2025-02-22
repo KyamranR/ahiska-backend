@@ -126,9 +126,10 @@ describe("Event Model", () => {
       });
     });
 
-    it("returns null if event does not exist", async () => {
-      const updatedEvent = await Event.update(-1, { title: "No Event" });
-      expect(updatedEvent).toBeNull();
+    it("returns not found if event does not exist", async () => {
+      await expect(Event.update(-1, { title: "No Event" })).rejects.toThrow(
+        "Not Found"
+      );
     });
   });
 
@@ -146,9 +147,8 @@ describe("Event Model", () => {
       expect(result.rows.length).toBe(0);
     });
 
-    it("returns null if event does not exist", async () => {
-      const deletedEvent = await Event.delete(-1);
-      expect(deletedEvent).toBeNull();
+    it("returns not found if event does not exist", async () => {
+      await expect(Event.delete(-1)).rejects.toThrow("Event not found.");
     });
   });
 });
