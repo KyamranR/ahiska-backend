@@ -3,13 +3,13 @@
 const express = require("express");
 const Feedback = require("../models/feedback");
 const router = express.Router({ mergeParams: true });
-const { ensureLoggedIn } = require("../middleware/auth");
+const { ensureLoggedIn, authenticateJWT } = require("../middleware/auth");
 const jsonschema = require("jsonschema");
 const feedbackSchema = require("../schemas/feedbackSchema.json");
 const { BadRequestError, NotFoundError } = require("../expressError");
 
 /** Add feedback: POST /events/:eventId/feedback */
-router.post("/", ensureLoggedIn, async (req, res, next) => {
+router.post("/", authenticateJWT, ensureLoggedIn, async (req, res, next) => {
   try {
     const validator = jsonschema.validate(req.body, feedbackSchema);
     if (!validator.valid) {
@@ -18,9 +18,9 @@ router.post("/", ensureLoggedIn, async (req, res, next) => {
     }
 
     const feedback = await Feedback.create({
-      ...req.body,
+      content: req.body.content,
       eventId: req.params.eventId,
-      userId: req.user.id,
+      userId: res.locals.user.id,
     });
 
     return res.status(201).json({ feedback });
@@ -51,7 +51,7 @@ router.patch("/:feedbackId", ensureLoggedIn, async (req, res, next) => {
     const feedback = await Feedback.update(
       req.params.feedbackId,
       req.body,
-      req.user
+      res.locals.user
     );
     return res.status(200).json({ feedback });
   } catch (error) {
