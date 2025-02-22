@@ -25,7 +25,7 @@ app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/q_and_a", qAndARoutes);
 app.use("/events", eventRoutes);
-app.use("/feedback", feedbackRoutes);
+app.use("/events/:eventId/feedback", feedbackRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
