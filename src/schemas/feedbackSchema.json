@@ -16,6 +16,6 @@
       "minimum": 1
     }
   },
-  "required": ["content", "eventId", "userId"],
+  "required": ["content"],
   "additionalProperties": false
 }
