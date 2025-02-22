@@ -59,14 +59,16 @@ class Feedback {
   }
 
   // Delete feedback by ID
-  static async delete(id) {
+  static async delete(feedbackId) {
     const result = await db.query(
       `DELETE FROM feedback
             WHERE id = $1
             RETURNING id`,
-      [id]
+      [feedbackId]
     );
-    return result.rows.length > 0;
+    if (!result.rows.length) {
+      throw new NotFoundError("Feedback not found");
+    }
   }
 }
 
