@@ -2,20 +2,16 @@
 
 const db = require("../db");
 const { sqlForPartialUpdate } = require("../helper/sql");
+const { NotFoundError } = require("../expressError");
 
 class Event {
   // Create a new event
   static async create({ title, description, date, time, location, createdBy }) {
-    console.log("Date and Time:", date, time);
-    const formattedDate = new Date(date).toISOString().split("T")[0];
-    console.log("Formatted Date", formattedDate);
-    const formattedTime = /^\d{2}:\d{2}$/.test(time) ? `${time}:00` : time;
-    console.log("Formatted time:", formattedTime);
     const result = await db.query(
       `INSERT INTO events (title, description, event_date, event_time, location, created_by)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id, title, description, event_date AS "date", event_time AS "time", location, created_by AS "createdBy"`,
-      [title, description, formattedDate, formattedTime, location, createdBy]
+      [title, description, date, time, location, createdBy]
     );
     return result.rows[0];
   }
@@ -54,7 +50,11 @@ class Event {
                       RETURNING id, title, description, event_date AS "date", event_time AS "time", location, created_by AS "createdBy"`;
 
     const result = await db.query(querySql, [...values, eventId]);
-    return result.rows[0] || null;
+
+    if (!result.rows[0]) {
+      throw new NotFoundError("Not Found");
+    }
+    return result.rows[0];
   }
 
   // Delete an event
@@ -63,7 +63,11 @@ class Event {
       `DELETE FROM events WHERE id = $1 RETURNING id`,
       [eventId]
     );
-    return result.rows[0] || null;
+
+    if (result.rows.length === 0) {
+      throw new NotFoundError("Event not found.");
+    }
+    return result.rows[0];
   }
 }
 
