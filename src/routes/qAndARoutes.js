@@ -12,6 +12,7 @@ const router = new express.Router();
 /** Create a new question POST /q_and_a */
 router.post("/", ensureLoggedIn, async (req, res, next) => {
   try {
+    req.body.askedBy = res.locals.user.id;
     const validator = jsonschema.validate(req.body, qAndASchema);
 
     if (!validator.valid) {
@@ -20,9 +21,11 @@ router.post("/", ensureLoggedIn, async (req, res, next) => {
     }
 
     const { question } = req.body;
-    const askedBy = res.locals.user.id;
 
-    const newQuestion = await QAndA.create({ question, askedBy });
+    const newQuestion = await QandA.create({
+      question,
+      askedBy: req.body.askedBy,
+    });
     return res.status(201).json({ question: newQuestion });
   } catch (err) {
     return next(err);
@@ -38,7 +41,7 @@ router.patch("/:id/answer", ensureLoggedIn, async (req, res, next) => {
     const id = req.params.id;
     const answeredBy = res.locals.user.id;
 
-    const updatedQAndA = await QAndA.answer(id, [answer, answeredBy]);
+    const updatedQAndA = await QandA.answer(id, [answer, answeredBy]);
     if (!updatedQAndA) throw new NotFoundError(`Question not found: ${id}`);
 
     return res.status(200).json({ question: updatedQAndA });
