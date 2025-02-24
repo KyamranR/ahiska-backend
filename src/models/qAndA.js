@@ -1,6 +1,7 @@
 "use strict";
 
 const db = require("../db");
+const { NotFoundError } = require("../expressError");
 
 class QAndA {
   // Create new question
@@ -8,7 +9,7 @@ class QAndA {
     const result = await db.query(
       `INSERT INTO q_and_a (question, asked_by)
             VALUES ($1, $2)
-            RETURNING id, question, answer, asked_by AS "askedBy", answered_by AS "answeredBy", created_at AS "createAt", answered_at AS "answeredAt"`,
+            RETURNING id, question, answer, asked_by AS "askedBy", answered_by AS "answeredBy", created_at AS "createdAt", answered_at AS "answeredAt"`,
       [question, askedBy]
     );
     return result.rows[0];
@@ -62,7 +63,7 @@ class QAndA {
       [id]
     );
     if (!result.rows[0]) {
-      throw new Error(`No question found with ID: ${id}`);
+      throw new NotFoundError(`No question found with ID: ${id}`);
     }
 
     return result.rows[0];
