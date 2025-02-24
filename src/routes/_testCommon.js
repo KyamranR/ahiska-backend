@@ -11,6 +11,7 @@ let adminToken;
 let adminId;
 let userId;
 let eventId;
+let questionId;
 
 async function commonBeforeAll() {
   // Clear all tables
@@ -60,10 +61,11 @@ async function commonBeforeAll() {
   });
 
   // Insert question
-  await QandA.create({
+  const question = await QandA.create({
     question: "Test question?",
     askedBy: userId,
   });
+  questionId = question.id;
 }
 
 async function commonBeforeEach() {
@@ -94,6 +96,9 @@ function getAdminToken() {
   return adminToken;
 }
 
+function getQuestionId() {
+  return questionId;
+}
 module.exports = {
   commonBeforeAll,
   commonBeforeEach,
@@ -103,4 +108,5 @@ module.exports = {
   getAdminId,
   getUserId,
   getAdminToken,
+  getQuestionId,
 };
