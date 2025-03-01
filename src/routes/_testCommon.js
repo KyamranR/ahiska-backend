@@ -12,6 +12,7 @@ let adminId;
 let userId;
 let eventId;
 let questionId;
+let feedbackId;
 
 async function commonBeforeAll() {
   // Clear all tables
@@ -54,11 +55,12 @@ async function commonBeforeAll() {
   eventId = event.id;
 
   // Insert feedback
-  await Feedback.create({
+  const feedback = await Feedback.create({
     content: "Test feedback",
     eventId: eventId,
     userId: userId,
   });
+  feedbackId = feedback.id;
 
   // Insert question
   const question = await QandA.create({
@@ -99,6 +101,10 @@ function getAdminToken() {
 function getQuestionId() {
   return questionId;
 }
+
+function getFeedbackId() {
+  return feedbackId;
+}
 module.exports = {
   commonBeforeAll,
   commonBeforeEach,
@@ -109,4 +115,5 @@ module.exports = {
   getUserId,
   getAdminToken,
   getQuestionId,
+  getFeedbackId,
 };
