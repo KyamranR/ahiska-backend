@@ -14,7 +14,7 @@ beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
-
+let feedbackId;
 describe("Feedback Model", () => {
   let eventId, userId;
 
@@ -157,8 +157,10 @@ describe("Feedback Model", () => {
         userId,
       });
 
-      const success = await Feedback.delete(feedback.id);
-      expect(success).toBe(true);
+      feedbackId = feedback.id;
+      const success = await Feedback.delete(feedbackId);
+
+      expect(success).toBe(undefined);
 
       const result = await db.query(`SELECT id FROM feedback WHERE id = $1`, [
         feedback.id,
@@ -167,8 +169,12 @@ describe("Feedback Model", () => {
     });
 
     it("returns false if feedback does not exist", async () => {
-      const success = await Feedback.delete(-1);
-      expect(success).toBe(false);
+      expect.assertions(1);
+      try {
+        await Feedback.delete(-1);
+      } catch (err) {
+        expect(err instanceof NotFoundError).toBe(true);
+      }
     });
   });
 });
