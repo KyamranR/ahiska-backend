@@ -14,6 +14,7 @@ const {
   getAdminId,
   getUserId,
   getEventId,
+  getFeedbackId,
 } = require("./_testCommon");
 let userId;
 beforeAll(async () => {
@@ -153,7 +154,7 @@ describe("Admin Routes", () => {
   describe("DELETE /admin/feedback/:id", () => {
     test("Admin can delete feedback", async () => {
       const res = await request(app)
-        .delete("/admin/feedback/1")
+        .delete(`/admin/feedback/${getFeedbackId()}`)
         .set("Authorization", `Bearer ${adminToken}`);
 
       expect(res.statusCode).toBe(200);
