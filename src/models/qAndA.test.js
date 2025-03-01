@@ -29,7 +29,7 @@ describe("QAndA Model", () => {
         answer: null,
         askedBy: global.user1Id,
         answeredBy: null,
-        createAt: expect.any(Date),
+        createdAt: expect.any(Date),
         answeredAt: null,
       });
 
