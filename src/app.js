@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const qAndARoutes = require("./routes/qAndARoutes");
+const registrationRoutes = require("./routes/registrationRoutes");
 
 const { NotFoundError } = require("./expressError");
 const { handleErrors } = require("./middleware/errorHandlers");
@@ -26,6 +27,7 @@ app.use("/admin", adminRoutes);
 app.use("/q_and_a", qAndARoutes);
 app.use("/events", eventRoutes);
 app.use("/events/:eventId/feedback", feedbackRoutes);
+app.use("/events/:eventId/register", registrationRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
