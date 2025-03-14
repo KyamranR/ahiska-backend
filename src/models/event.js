@@ -30,7 +30,7 @@ class Event {
   // Get all events
   static async getAllEvents() {
     const result = await db.query(
-      `SELECT id, title, description, event_date AS "date", event_time AS "time", location, created_by AS "createdBy"
+      `SELECT id, title, description, date, time, location, created_by AS "createdBy"
        FROM events`
     );
     return result.rows;
