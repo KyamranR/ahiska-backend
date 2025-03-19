@@ -16,42 +16,63 @@ class QAndA {
   }
 
   // Answer a question
-  static async answer(id, [answer, answeredBy]) {
-    const result = await db.query(
-      `UPDATE q_and_a
-        SET answer = $1, answered_by = $2, answered_at = CURRENT_TIMESTAMP
-        WHERE id = $3
-        RETURNING id, question, answer, asked_by AS "askedBy",
-                    answered_by AS "answeredBy", created_at AS "createdAt",
-                    answered_at AS "answeredAt"`,
-      [answer, answeredBy, id]
+  static async answer(questionId, answer, answeredBy) {
+    await db.query(
+      `INSERT INTO answers (question_id, answer, answered_by)
+       VALUES ($1, $2, $3)`,
+      [questionId, answer, answeredBy]
     );
-    return result.rows[0];
+
+    const answers = await db.query(
+      `SELECT id, answer, answered_by AS "answeredBy", answered_at AS "answeredAt"
+       FROM answers WHERE question_id = $1 ORDER BY answered_at ASC`,
+      [questionId]
+    );
+
+    return answers.rows;
   }
 
   // Get all questions and answers
   static async getAll() {
-    const result = await db.query(
-      `SELECT id, question, answer, asked_by AS "askedBy",
-                answered_by AS "answeredBy", created_at AS "createdAt",
-                answered_at AS "answeredAt"
-        FROM q_and_a
-        ORDER BY created_at DESC`
+    const questionsResult = await db.query(
+      `SELECT id, question, asked_by AS "askedBy", created_at AS "createdAt"
+       FROM q_and_a
+       ORDER BY created_at DESC`
     );
-    return result.rows;
+
+    const questions = questionsResult.rows;
+
+    for (let question of questions) {
+      const answersResult = await db.query(
+        `SELECT id, answer, answered_by AS "answeredBy", answered_at AS "answeredAt"
+         FROM answers WHERE question_id = $1 ORDER BY answered_at ASC`,
+        [question.id]
+      );
+      question.answers = answersResult.rows;
+    }
+
+    return questions;
   }
 
   // Get a question by ID
   static async getById(id) {
-    const result = await db.query(
-      `SELECT id, question, answer, asked_by AS "askedBy",
-                answered_by AS "answeredBy", created_at AS "createdAt",
-                answered_at AS "answeredAt"
-        FROM q_and_a
-        WHERE id = $1`,
+    const questionResult = await db.query(
+      `SELECT id, question, asked_by AS "askedBy", created_at AS "createdAt"
+       FROM q_and_a WHERE id = $1`,
       [id]
     );
-    return result.rows[0];
+
+    const question = questionResult.rows[0];
+    if (!question) throw new NotFoundError(`No question found with ID: ${id}`);
+
+    const answersResult = await db.query(
+      `SELECT id, answer, answered_by AS "answeredBy", answered_at AS "answeredAt"
+       FROM answers WHERE question_id = $1 ORDER BY answered_at ASC`,
+      [id]
+    );
+    question.answers = answersResult.rows;
+
+    return question;
   }
 
   // Delete a question
