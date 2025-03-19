@@ -25,8 +25,8 @@ router.post("/", authenticateJWT, ensureAdmin, async (req, res, next) => {
     const requestBody = {
       title: req.body.title,
       description: req.body.description,
-      date: req.body.event_date,
-      time: req.body.event_time,
+      date: req.body.date,
+      time: req.body.time,
       location: req.body.location,
       createdBy: req.body.created_by,
     };
