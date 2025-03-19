@@ -41,10 +41,10 @@ router.patch("/:id/answer", ensureLoggedIn, async (req, res, next) => {
     const id = req.params.id;
     const answeredBy = res.locals.user.id;
 
-    const updatedQAndA = await QandA.answer(id, [answer, answeredBy]);
-    if (!updatedQAndA) throw new NotFoundError(`Question not found: ${id}`);
+    const updatedAnswers = await QandA.answer(id, answer, answeredBy);
+    if (!updatedAnswers) throw new NotFoundError(`Question not found: ${id}`);
 
-    return res.status(200).json({ question: updatedQAndA });
+    return res.status(200).json({ answers: updatedAnswers });
   } catch (err) {
     return next(err);
   }
