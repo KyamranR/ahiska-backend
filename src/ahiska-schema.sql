@@ -40,6 +40,15 @@ CREATE TABLE q_and_a (
     answered_at TIMESTAMP
 );
 
+-- Create Answers table for Q&A
+CREATE TABLE answers (
+    id SERIAL PRIMARY KEY,
+    question_id INT REFERENCES q_and_a(id) ON DELETE CASCADE,
+    answer TEXT NOT NULL,
+    answered_by INT REFERENCES users(id) ON DELETE SET NULL,
+    answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create the Feedback table
 CREATE TABLE feedback (
     id SERIAL PRIMARY KEY,
