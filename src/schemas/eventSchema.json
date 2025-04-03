@@ -12,13 +12,12 @@
       "type": ["string", "null"],
       "maxLength": 5000
     },
-    "date": {
+    "event_date": {
       "type": "string",
       "format": "date"
     },
-    "time": {
-      "type": "string",
-      "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?$"
+    "event_time": {
+      "type": "string"
     },
     "location": {
       "type": "string",
@@ -30,6 +29,6 @@
       "minimum": 1
     }
   },
-  "required": ["title", "date", "time", "location", "created_by"],
+  "required": ["title", "event_date", "event_time", "location", "created_by"],
   "additionalProperties": false
 }

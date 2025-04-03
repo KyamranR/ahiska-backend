@@ -5,10 +5,10 @@
   "properties": {
     "title": { "type": "string", "maxLength": 255 },
     "description": { "type": ["string", "null"], "maxLength": 5000 },
-    "date": { "type": "string", "format": "date" },
-    "time": {
+    "event_date": { "type": "string", "format": "date" },
+    "event_time": {
       "type": "string",
-      "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?$"
+      "format": "time"
     },
     "location": { "type": "string", "maxLength": 255 }
   },
