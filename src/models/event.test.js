@@ -21,8 +21,8 @@ describe("Event Model", () => {
     eventData = {
       title: "New Test Event",
       description: "New event description",
-      date: "2024-03-20",
-      time: "12:00",
+      event_date: "2024-03-20",
+      event_time: "12:00",
       location: "Test Location",
       createdBy: global.user1Id,
     };
@@ -37,8 +37,8 @@ describe("Event Model", () => {
         id: expect.any(Number),
         title: eventData.title,
         description: eventData.description,
-        date: expect.anything(),
-        time: expect.anything(),
+        event_date: expect.anything(),
+        event_time: expect.anything(),
         location: eventData.location,
         createdBy: global.user1Id,
       });
@@ -64,8 +64,8 @@ describe("Event Model", () => {
         id: existingEvent.id,
         title: eventData.title,
         description: eventData.description,
-        date: expect.anything(),
-        time: expect.anything(),
+        event_date: expect.anything(),
+        event_time: expect.anything(),
         location: eventData.location,
         createdBy: global.user1Id,
       });
@@ -87,8 +87,8 @@ describe("Event Model", () => {
         id: expect.any(Number),
         title: expect.any(String),
         description: expect.any(String),
-        date: expect.anything(),
-        time: expect.anything(),
+        event_date: expect.anything(),
+        event_time: expect.anything(),
         location: expect.any(String),
         createdBy: expect.any(Number),
       });
@@ -109,8 +109,8 @@ describe("Event Model", () => {
         id: event.id,
         title: "Updated Event Title",
         description: "Updated description",
-        date: expect.anything(),
-        time: expect.anything(),
+        event_date: expect.anything(),
+        event_time: expect.anything(),
         location: eventData.location,
         createdBy: global.user1Id,
       });
