@@ -38,7 +38,7 @@ class Registration {
             ORDER BY e.event_date`,
       [userId]
     );
-    return result.rows;
+    return { registration: result.rows };
   }
 
   // Remove user from registered event
