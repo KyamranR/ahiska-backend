@@ -47,12 +47,13 @@ describe("QAndA Model", () => {
         askedBy: global.user1Id,
       });
 
-      const result = await QAndA.answer(question.id, [
+      const result = await QAndA.answer(
+        question.id,
         "Structured Query Language",
-        global.user2Id,
-      ]);
+        global.user2Id
+      );
       expect(result).toEqual({
-        id: question.id,
+        id: expect.any(Number),
         question: "What is SQL?",
         answer: "Structured Query Language",
         askedBy: global.user1Id,
@@ -88,17 +89,16 @@ describe("QAndA Model", () => {
       expect(result).toEqual({
         id: question.id,
         question: "What is Docker?",
-        answer: null,
         askedBy: global.user1Id,
-        answeredBy: null,
         createdAt: expect.any(Date),
-        answeredAt: null,
+        answers: expect.any(Array),
       });
     });
 
-    it("returns undefined if question is not found", async () => {
-      const result = await QAndA.getById(-1);
-      expect(result).toBeUndefined();
+    it("returns No question found with ID if question is not found", async () => {
+      await expect(QAndA.getById(-1)).rejects.toThrow(
+        "No question found with ID: -1"
+      );
     });
   });
 
