@@ -14,12 +14,13 @@ const {
   getUserId,
   getQuestionId,
 } = require("./_testCommon");
+const { answer } = require("../models/qAndA");
 let questionId;
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
-console.log("question id", questionId);
+
 /** POST /q_and_a => Create new question */
 describe("POST /q_and_a", () => {
   test("Allow logged-in user to create a question", async () => {
@@ -77,10 +78,11 @@ describe("PATCH /q_and_a/:id/answer", () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
-      question: expect.objectContaining({
-        id: questionId,
+      answers: expect.objectContaining({
         answer: "4",
-        answeredBy: getAdminId(),
+        answeredBy: expect.any(Number),
+        answeredAt: expect.any(String),
+        id: expect.any(Number),
       }),
     });
   });
@@ -133,11 +135,9 @@ describe("GET /q_and_a/:id", () => {
       expect.objectContaining({
         id: getQuestionId(),
         question: "Test question?",
-        answer: null,
         askedBy: expect.any(Number),
-        answeredBy: null,
         createdAt: expect.any(String),
-        answeredAt: null,
+        answers: expect.any(Array),
       })
     );
   });
