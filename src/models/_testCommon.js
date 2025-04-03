@@ -13,6 +13,8 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM feedback");
   await db.query("DELETE FROM events");
   await db.query("DELETE FROM users");
+  await db.query("DELETE FROM answers");
+  await db.query("DELETE FROM q_and_a");
 
   // Insert test users
 
@@ -43,8 +45,8 @@ async function commonBeforeAll() {
   const event1 = await Event.create({
     title: "Test Event 1",
     description: "Test event description 1",
-    date: "2024-03-15",
-    time: "10:00",
+    event_date: "2024-03-15",
+    event_time: "10:00",
     location: "Test Location 1",
     createdBy: user1.id,
   });
@@ -52,8 +54,8 @@ async function commonBeforeAll() {
   const event2 = await Event.create({
     title: "Test Event 2",
     description: "Test event description 2",
-    date: "2024-03-22",
-    time: "14:00",
+    event_date: "2024-03-22",
+    event_time: "14:00",
     location: "Test Location 2",
     createdBy: user2.id,
   });
@@ -67,18 +69,26 @@ async function commonBeforeAll() {
     eventId: event1.id,
     userId: user1.id,
   });
-
+  console.log("Creating test questions...");
   // Insert test Q&A
   const qAndA1 = await QAndA.create({
     question: "When is the next event?",
     askedBy: user1.id,
   });
 
+  global.qAndA1Id = qAndA1.id;
+  console.log("Creating test answer...");
+  await db.query(
+    `INSERT INTO answers (question_id, answer, answered_by) VALUES ($1, $2, $3)`,
+    [qAndA1.id, "This is a test answer", user2.id]
+  );
+
   // Insert test registrations
   const registration1 = await Registration.register(
     global.event1,
     global.user1Id
   );
+  console.log("Test setup complete!");
 
   return { user1, user2, event1, event2, feedback1, qAndA1, registration1 };
 }
