@@ -47,8 +47,8 @@ async function commonBeforeAll() {
   const event = await Event.create({
     title: "Test Event",
     description: "Event for testing",
-    date: "2025-02-15",
-    time: "12:00:00",
+    event_date: "2025-02-15",
+    event_time: "12:00:00",
     location: "Test Location",
     createdBy: adminId,
   });
