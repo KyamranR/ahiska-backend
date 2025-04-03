@@ -56,8 +56,8 @@ describe("POST /events", () => {
     const newEvent = {
       title: "Should Fail",
       description: "Should not create",
-      date: "2025-03-10",
-      time: "15:00",
+      event_date: "2025-03-10",
+      event_time: "15:00",
       location: "No Location",
     };
 
