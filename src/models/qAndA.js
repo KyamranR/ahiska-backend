@@ -12,54 +12,75 @@ class QAndA {
             RETURNING id, question, answer, asked_by AS "askedBy", answered_by AS "answeredBy", created_at AS "createdAt", answered_at AS "answeredAt"`,
       [question, askedBy]
     );
-    return result.rows[0];
+
+    const createdQuestion = result.rows[0];
+
+    const userRes = await db.query(
+      `SELECT first_name, last_name FROM users WHERE id = $1`,
+      [askedBy]
+    );
+
+    createdQuestion.askedByFirstName = userRes.rows[0].first_name;
+    createdQuestion.askedByLastName = userRes.rows[0].last_name;
+    createdQuestion.answers = [];
+
+    return createdQuestion;
   }
 
   // Answer a question
-  static async answer(questionId, answer, answeredBy) {
-    const questionResult = await db.query(
-      `SELECT id, question, asked_by AS "askedBy", created_at AS "createdAt"
-       FROM q_and_a WHERE id = $1`,
+  static async answer(questionId, answerText, userId) {
+    await db.query(
+      `INSERT INTO answers (answer, question_id, answered_by)
+       VALUES ($1, $2, $3)`,
+      [answerText, questionId, userId]
+    );
+
+    // Get the question with asker info
+    const questionRes = await db.query(
+      `SELECT q.id,
+              q.question,
+              q.asked_by,
+              u.first_name AS "askedByFirstName",
+              u.last_name AS "askedByLastName"
+       FROM q_and_a q
+         JOIN users u ON q.asked_by = u.id
+       WHERE q.id = $1`,
       [questionId]
     );
 
-    const question = questionResult.rows[0];
-    if (!question) {
-      throw new NotFoundError(`Question not found: ${questionId}`);
-    }
+    const question = questionRes.rows[0];
 
-    const answerResult = await db.query(
-      `INSERT INTO answers (question_id, answer, answered_by, answered_at)
-       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
-       RETURNING id, answer, answered_by AS "answeredBy", answered_at AS "answeredAt"`,
-      [questionId, answer, answeredBy]
+    // Get all answers with user names
+    const answersRes = await db.query(
+      `SELECT a.id,
+              a.answer,
+              a.answered_by AS "answeredBy",
+              a.answered_at AS "answeredAt",
+              u.first_name AS "answeredByFirstName",
+              u.last_name AS "answeredByLastName"
+       FROM answers a
+         JOIN users u ON a.answered_by = u.id
+       WHERE a.question_id = $1
+       ORDER BY a.answered_at ASC`,
+      [questionId]
     );
 
-    const answerRow = answerResult.rows[0];
+    question.answers = answersRes.rows;
 
-    await db.query(
-      `UPDATE q_and_a
-       SET answer = $1, answered_by = $2, answered_at = CURRENT_TIMESTAMP
-       WHERE id = $3`,
-      [answerRow.answer, answeredBy, questionId]
-    );
-
-    return {
-      id: question.id,
-      question: question.question,
-      answer: answerRow.answer,
-      askedBy: question.askedBy,
-      answeredBy: answerRow.answeredBy,
-      createdAt: question.createdAt,
-      answeredAt: answerRow.answeredAt,
-    };
+    return question.answers;
   }
 
   // Get all questions and answers
   static async getAll() {
     const questionsResult = await db.query(
-      `SELECT id, question, asked_by AS "askedBy", created_at AS "createdAt"
-       FROM q_and_a
+      `SELECT q.id,
+            q.question,
+            q.asked_by AS "askedBy",
+            q.created_at AS "createdAt",
+            u.first_name AS "askedByFirstName",
+            u.last_name AS "askedByLastName"
+     FROM q_and_a q
+     JOIN users u ON q.asked_by = u.id
        ORDER BY created_at DESC`
     );
 
@@ -67,8 +88,15 @@ class QAndA {
 
     for (let question of questions) {
       const answersResult = await db.query(
-        `SELECT id, answer, answered_by AS "answeredBy", answered_at AS "answeredAt"
-         FROM answers WHERE question_id = $1 ORDER BY answered_at ASC`,
+        `SELECT a.id,
+              a.answer,
+              a.answered_by AS "answeredBy",
+              a.answered_at AS "answeredAt",
+              u.first_name AS "answeredByFirstName",
+              u.last_name AS "answeredByLastName"
+       FROM answers a
+       JOIN users u ON a.answered_by = u.id
+       WHERE a.question_id = $1 ORDER BY answered_at ASC`,
         [question.id]
       );
       question.answers = answersResult.rows;
