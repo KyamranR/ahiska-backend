@@ -46,8 +46,8 @@ class Event {
   // Update an event
   static async update(eventId, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
-      event_date: "date",
-      event_time: "time",
+      event_date: "event_date",
+      event_time: "event_time",
     });
     const eventIdIdx = "$" + (values.length + 1);
 

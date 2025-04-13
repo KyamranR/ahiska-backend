@@ -7,8 +7,7 @@
     "description": { "type": ["string", "null"], "maxLength": 5000 },
     "event_date": { "type": "string", "format": "date" },
     "event_time": {
-      "type": "string",
-      "format": "time"
+      "type": "string"
     },
     "location": { "type": "string", "maxLength": 255 }
   },
