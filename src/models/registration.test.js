@@ -59,20 +59,22 @@ describe("Registration Model", () => {
     it("gets all events that a user registered for", async () => {
       const result = await Registration.getByUser(global.user1Id);
 
-      expect(result).toEqual([
-        {
-          id: expect.any(Number),
-          eventId: global.event1,
-          userId: global.user1Id,
-          eventTitle: "Test Event 1",
-          eventDate: expect.anything(),
-        },
-      ]);
+      expect(result).toEqual({
+        registration: [
+          {
+            id: expect.any(Number),
+            eventId: global.event1,
+            userId: global.user1Id,
+            eventTitle: "Test Event 1",
+            eventDate: expect.anything(),
+          },
+        ],
+      });
     });
 
     it("returns an empty array if user has no registrations", async () => {
       const result = await Registration.getByUser(global.user2Id);
-      expect(result).toEqual([]);
+      expect(result).toEqual({ registration: [] });
     });
   });
 
