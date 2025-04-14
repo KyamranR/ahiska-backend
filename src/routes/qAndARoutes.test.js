@@ -78,12 +78,14 @@ describe("PATCH /q_and_a/:id/answer", () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
-      answers: expect.objectContaining({
-        answer: "4",
-        answeredBy: expect.any(Number),
-        answeredAt: expect.any(String),
-        id: expect.any(Number),
-      }),
+      answers: expect.arrayContaining([
+        expect.objectContaining({
+          answer: "4",
+          answeredBy: expect.any(Number),
+          answeredAt: expect.any(String),
+          id: expect.any(Number),
+        }),
+      ]),
     });
   });
 

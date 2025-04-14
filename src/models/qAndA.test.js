@@ -28,9 +28,12 @@ describe("QAndA Model", () => {
         question: "What is JavaScript?",
         answer: null,
         askedBy: global.user1Id,
+        askedByFirstName: "Test",
+        askedByLastName: "User",
         answeredBy: null,
         createdAt: expect.any(Date),
         answeredAt: null,
+        answers: [],
       });
 
       const dbCheck = await db.query("SELECT * FROM q_and_a WHERE id = $1", [
@@ -52,19 +55,24 @@ describe("QAndA Model", () => {
         "Structured Query Language",
         global.user2Id
       );
-      expect(result).toEqual({
-        id: expect.any(Number),
-        question: "What is SQL?",
-        answer: "Structured Query Language",
-        askedBy: global.user1Id,
-        answeredBy: global.user2Id,
-        createdAt: expect.any(Date),
-        answeredAt: expect.any(Date),
-      });
+      expect(result).toEqual([
+        {
+          id: expect.any(Number),
 
-      const dbCheck = await db.query("SELECT * FROM q_and_a WHERE id = $1", [
-        question.id,
+          answer: "Structured Query Language",
+
+          answeredBy: global.user2Id,
+          answeredByFirstName: "Admin",
+          answeredByLastName: "User",
+
+          answeredAt: expect.any(Date),
+        },
       ]);
+
+      const dbCheck = await db.query(
+        "SELECT * FROM answers WHERE question_id = $1",
+        [question.id]
+      );
       expect(dbCheck.rows[0].answer).toBe("Structured Query Language");
     });
   });

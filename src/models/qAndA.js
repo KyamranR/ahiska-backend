@@ -29,6 +29,15 @@ class QAndA {
 
   // Answer a question
   static async answer(questionId, answerText, userId) {
+    const questionCheck = await db.query(
+      `SELECT id FROM q_and_a WHERE id = $1`,
+      [questionId]
+    );
+
+    if (questionCheck.rows.length === 0) {
+      throw new NotFoundError("No question found with ID:", questionId);
+    }
+
     await db.query(
       `INSERT INTO answers (answer, question_id, answered_by)
        VALUES ($1, $2, $3)`,
