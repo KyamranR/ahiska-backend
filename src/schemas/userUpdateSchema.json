@@ -4,7 +4,7 @@
     "firstName": { "type": "string" },
     "lastName": { "type": "string" },
     "bio": { "type": "string" },
-    "profilePic": { "type": "string", "format": "uri" }
+    "profilePic": { "type": "string" }
   },
   "required": [],
   "additionalProperties": false
