@@ -2,6 +2,7 @@
 
 const express = require("express");
 const User = require("../models/user");
+const Registration = require("../models/registration");
 const router = new express.Router();
 const jsonschema = require("jsonschema");
 const userUpdateSchema = require("../schemas/userUpdateSchema.json");
@@ -92,6 +93,18 @@ router.patch(
     }
   }
 );
+
+/** Get all events a user has registered for: GET /users/:userId/registrations */
+router.get("/:userId/registrations", async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const registrations = await Registration.getByUser(userId);
+
+    return res.status(200).json({ registrations });
+  } catch (error) {
+    return next(error);
+  }
+});
 
 /** Delete a user: DELETE /users/:id */
 router.delete(
