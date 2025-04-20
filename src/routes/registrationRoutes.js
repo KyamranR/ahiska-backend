@@ -46,16 +46,4 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// /** Get all events a user has registered for: GET /users/:userId/registrations */
-// router.get("/user/:userId", async (req, res, next) => {
-//   try {
-//     const { userId } = req.params;
-//     const registrations = await Registration.getByUser(userId);
-
-//     return res.status(200).json({ registrations });
-//   } catch (error) {
-//     return next(error);
-//   }
-// });
-
 module.exports = router;
