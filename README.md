@@ -3,12 +3,11 @@
 ## How to setup backend
 
 - Clone from github
-- npm install
+- Run `npm install`
 - Setup .env file
-- npm install nodemon (optional)
-- npm run dev
+- Run `npm install`
+- Run `npm run dev`
 
 ## How to run tests
 
-- npm install jest jest-mock
-- npm run test
+- Run `npm run test`
